@@ -5,19 +5,20 @@
         {
             "settings": {
                 "files.exclude": {
-                    "**/.git": true,         // this is a default value
-                    "**/.DS_Store": true,    // this is a default value
-        
+                    "**/.git": true, // this is a default value
+                    "**/.DS_Store": true, // this is a default value
                     "**/data": true, // this excludes all folders 
-                                            // named "node_modules" from 
-                                            // the explore tree
-        
+                    // named "node_modules" from 
+                    // the explore tree
                     // alternative version
-                    "data": true    // this excludes the folder 
-                                            // only from the root of
-                                            // your workspace 
+                    "data": true // this excludes the folder 
+                    // only from the root of
+                    // your workspace 
                 }
-            }
+            },
+            "python.linting.pylintArgs": [
+                "--generated-members=numpy.* ,torch.*"
+            ]
         }
     ]
 }

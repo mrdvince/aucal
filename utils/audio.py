@@ -3,7 +3,7 @@ import librosa
 import librosa.filters
 import numpy as np
 from scipy.io import wavfile
-from hparams import hparams as hps
+from ..config import hparams as hps
 
 
 def load_wav(path):
