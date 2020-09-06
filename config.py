@@ -2,6 +2,7 @@ from text import symbols
 
 
 class hparams:
+    data_dir = 'data/tacotron/LJSpeech-1.1'
 	################################
 	# Data Parameters              #
 	################################
@@ -74,4 +75,4 @@ class hparams:
 	grad_clip_thresh = 1.0
 	mask_padding = True
 	p = 10 # mel spec loss penalty
-	eg_text = 'Make America great again!'
+	eg_text = 'Hello how are you'
