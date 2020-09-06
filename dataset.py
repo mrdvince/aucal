@@ -47,6 +47,46 @@ class ljdataset(Dataset):
     def __len__(self):
         return len(self.file_list)
 
+
+class ljcollate():
+    def __init__(self, n_frames_per_step=config.hparams.n_frames_per_step):
+        self.n_frames_per_step = n_frames_per_step
+
+    def __call__(self, batch):
+        input_lenghts, ids_sorted = torch.sort(
+            torch.LongTensor([len(x) for x in batch]),
+            dim=0, descending=True)
+
+        max_input_len = input_lenghts[0]
+        text_padded = torch.LongTensor(len(batch), max_input_len)
+        text_padded.zero_()
+        for i in range(len(ids_sorted)):
+            text = batch[ids_sorted[i]][0]
+            text_padded[i, :text.size(0)] = text
+
+        num_mels = batch[0][1].size(0)
+        max_target_len = max([x[1].size for x in batch])
+
+        if max_target_len % self.n_frames_per_step != 0:
+            max_input_len += self.n_frames_per_step - \
+                max_target_len % self.n_frames_per_step
+            assert max_target_len % self.n_frames_per_step == 0
+
+        mel_padded = torch.FloatTensor(len(batch), num_mels, max_input_len)
+        mel_padded.zero_()
+        gate_padded = torch.FloatTensor(len(batch), max_target_len)
+        gate_padded.zero_()
+        output_lenghths = torch.LongTensor(len(batch))
+
+        for i in range(len(ids_sorted)):
+            mel = batch[ids_sorted[i]][1]
+            mel_padded[i, :, :mel.size(1)] = mel
+            gate_padded[i, mel.size(1)-1:] = 1
+            output_lenghths[i] = mel.size(1)
+
+        return text_padded, input_lenghts, mel_padded, gate_padded, output_lenghths
+
+
 class TacotronModule(pl.LightningDataModule):
     def __init__(self):
         super().__init__()
